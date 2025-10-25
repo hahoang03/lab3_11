@@ -77,52 +77,118 @@
             </div>
             
             <!-- TODO: Add email field -->
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter email">
+                <div class="error-message" id="emailError"></div>
+            </div>
             
             <!-- TODO: Add password field -->
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password">
+                <div class="error-message" id="passwordError"></div>
+            </div>
             
             <!-- TODO: Add confirm password field -->
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm password">
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
             
-            <button type="submit" id="submitBtn" disabled>Sign Up</button>
+            <button type="submit" id="submitButton" disabled>Sign Up</button>
         </form>
     </div>
 
     <script>
         // TODO: Implement validation functions
+        const form = document.getElementById('signupForm');
+        const submitBtn= document.getElementById('submitButton');
+
+        const validationState = {
+            username: false,
+            email: false,
+            password: false,
+            confirmPassword: false
+        };
         
         function validateUsername(username) {
             // TODO: Check length (4-20) and alphanumeric
+            const isValid = /^[a-zA-Z0-9]{4,20}$/.test(username);
+            if (!isValid) showError('username', 'Username must be 4-20 alphanumeric characters');
+            else clearError('username');
+            validationState.username = isValid;
         }
         
         function validateEmail(email) {
             // TODO: Use regex for email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValid = emailRegex.test(email);
+            if (!isValid) showError('email', 'Invalid email format');
+            else clearError('email');
+            validationState.email = isValid;
         }
         
         function validatePassword(password) {
             // TODO: Check length >= 8, has uppercase, has number
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            const isValid = passwordRegex.test(password);
+            if (!isValid) showError('password', 'Password must be at least 8 characters, include uppercase and number');
+            else clearError('password');
+            validationState.password = isValid;
         }
         
         function validatePasswordMatch(pass1, pass2) {
             // TODO: Compare passwords
+            const isValid = pass1 === pass2 && pass2.length > 0;
+            if (!isValid) showError('confirmPassword', 'Passwords do not match');
+            else clearError('confirmPassword');
+            validationState.confirmPassword = isValid;
         }
         
         function showError(fieldId, message) {
             // TODO: Display error message
+            const input = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            input.classList.add('invalid');
+            input.classList.remove('valid');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
         }
         
         function clearError(fieldId) {
             // TODO: Clear error message
+            const input = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            input.classList.remove('invalid');
+            input.classList.add('valid');
+            errorDiv.textContent = '';
+            errorDiv.classList.remove('show');
         }
         
         function validateForm() {
             // TODO: Validate all fields and enable/disable submit
+            validateUsername(document.getElementById('username').value);
+            validateEmail(document.getElementById('email').value);
+            validatePassword(document.getElementById('password').value);
+            validatePasswordMatch(
+                document.getElementById('password').value,
+                document.getElementById('confirmPassword').value
+            );
+
+            submitBtn.disabled = !Object.values(validationState).every(Boolean);
         }
         
         // TODO: Add event listeners for real-time validation
+        ['username', 'email', 'password', 'confirmPassword'].forEach(id => {
+            document.getElementById(id).addEventListener('input', validateForm);
+        });
         
         document.getElementById('signupForm').addEventListener('submit', function(e) {
             e.preventDefault();
             // TODO: Handle form submission
+            alert('Successfully submitted form!');
         });
     </script>
 </body>
